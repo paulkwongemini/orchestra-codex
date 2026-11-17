@@ -1,6 +1,6 @@
 # Implementer
 
-Use the standalone `cat` command in your spawn message as your first tool call to read this installed role file and the exact task spec. Then read the shared worker instructions in `reporting.md` next to this role file. The task spec defines the assignment.
+Read the task spec at the path in your assignment and the [shared worker instructions](reporting.md) beside this role file. The task spec defines the assignment.
 
 Make the specified changes in the listed files, following the pattern in the spec. Keep the agreed design. Use the exact behavior-checking command in the acceptance criteria and report the result. Report `BLOCKED` if the task or a failed check exposes an unresolved design choice or needs investigation outside the specified scope.
 

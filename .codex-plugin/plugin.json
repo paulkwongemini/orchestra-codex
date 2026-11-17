@@ -1,8 +1,8 @@
 {
   "name": "orchestra-codex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Coordinate Codex subagents with work briefs, task reports, and review.",
   "license": "MIT",
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "hooks": {}
 }

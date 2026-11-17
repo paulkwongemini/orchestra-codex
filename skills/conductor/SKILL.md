@@ -1,27 +1,27 @@
 ---
 name: conductor
-description: Use on gpt-6.2-astra when the Orchestra Codex session hook activates the conductor workflow or the user explicitly invokes this skill.
+description: Coordinate multi-agent project work on gpt-6.2-astra when the user asks for orchestration, delegation to workers, or resumption of Orchestra work. An explicit request to disable Orchestra in this chat takes precedence over automatic skill selection.
 ---
 
 # Conduct an Orchestra Codex session
 
-Conductor mode applies when Orchestra Codex is enabled for this chat and the active model is exactly `gpt-6.2-astra`. You clarify intent, design the work, delegate implementation, independently verify results, and integrate them. If the user switches models or disables Orchestra Codex, follow the resulting session mode.
+On `gpt-6.2-astra`, use this workflow when the user asks for orchestration or invokes `$orchestra-codex:conductor` or `$orchestra-codex:enable`. You clarify intent, design the work, delegate implementation, independently verify results, and integrate them. If the user only asks to enable the workflow, acknowledge the choice in one sentence.
+
+Follow the user's latest choice in this conversation, including after context compaction. After `$orchestra-codex:disable` or a request to switch to ordinary Codex, stay in ordinary Codex until the user explicitly asks to use Orchestra again. If the user switches away from Astra, work in the selected model's ordinary mode. If they invoke the conductor on another model, explain that conducting requires `gpt-6.2-astra`.
 
 Preserve the user's Astra effort setting in the client. When advising on effort, match the recommendation to the conductor's work. Medium suits bounded planning or a survey, High can help trace a hypothesis across systems or resolve multistep trade-offs, and Extra High can help evaluate interacting causes. The user makes any setting change. [Codex model guide](https://learn.chatgpt.com/docs/models#pick-a-reasoning-effort) · [Prompting GPT-6.2 in Codex](https://learn.chatgpt.com/guides/prompting-gpt-6-2-astra#match-reasoning-effort-to-the-task)
 
-When a hook denies an action, follow its instructions. Keep working on independent tasks while a decision is pending.
-
-Resolve the installed plugin root from this skill's location, two levels above its directory (`../..`). If a SessionStart note supplies the absolute root, use it. Use absolute paths rooted there for the role files and for each required `cat` below. Read the full skill again when its instructions are no longer in context.
+Resolve the installed plugin root two directories above the directory containing this skill (`../..`). Read the linked skills from that installation and resolve work records from the project directory. Reload this skill if its instructions have fallen out of context.
 
 ## Direct answer or work
 
-Decide on each user message. Answer directly when it asks only for an explanation and the conversation, project files, or web can supply the answer through ordinary read-only research. A requested change, investigation with a deliverable, or action requiring approval is work. Continue against the confirmed brief when the request stays within that brief.
+Answer an explanation-only question directly from the conversation, project files, or read-only research. A requested change, investigation with a deliverable, or action requiring approval is work. Continue against the confirmed brief when the request stays within that brief.
 
-For new or changed work, read the interview skill before asking a question or taking any project action. Scale the interview and records to the task. Use the user's language for replies and the brief, leaving the required headings and field names as shown.
+For new or changed work, follow the [interview skill](../interview/SKILL.md) before asking a question or changing the project. Scale the interview and records to the task. Use the user's language for replies and the brief, leaving the required headings and field names as shown.
 
 ## Work folder
 
-Give each piece of work its own `.orchestra/<work>/` folder, where `<work>` is a date and short name such as `2026-11-12-login-fix`.
+Give each piece of work its own `.orchestra/<work>/` folder, where `<work>` is a date and short name such as `2026-11-12-login-fix`. Keep records local unless the user authorizes tracking them. When first creating local work records in a Git repository, check whether they are already ignored. If they need an ignore rule and `.orchestra/.gitignore` is absent, create it with a single line containing `*`. Preserve any existing ignore file and the user's tracking choices.
 
 ```text
 .orchestra/<work>/
@@ -33,43 +33,43 @@ Give each piece of work its own `.orchestra/<work>/` folder, where `<work>` is a
   files/T01/               Working files when specified
 ```
 
-On resumption, select the active brief with the exact shell command `cat .orchestra/<work>/brief.md` from the project directory. Use task specs, review records, report filenames, and group entries to recover progress. Read report contents in review order. Keep working records local unless the user authorizes tracking them.
+When resuming, including after compaction, use the work folder identified in the conversation or its summary. If the path is missing, match the requested work to the existing briefs. Ask which folder the user means only if the task and conversation leave it ambiguous. Read the matching brief, decisions, task specs, and reviews to find the next unfinished step. If the conversation and work records leave confirmation of the current brief uncertain, show it to the user before proceeding with that work. Use report filenames and worker handbacks to locate results, and read reports in the review order below.
 
 ## Workflow
 
 ### 1. Understand the intent
 
-Run `cat <plugin-root>/skills/interview/SKILL.md` with the resolved literal path and follow it. Write the brief after the interview. Show it to the user and ask whether to start now or wait while they review it. Wait for a normal chat reply authorizing work on that version. Repeat this confirmation whenever the brief changes.
-
-Use `apply_patch` for conductor edits, including the records in the work folder and the exact project files authorized under `Conductor writes:`.
+After the interview, show the new or revised brief and wait for a chat reply authorizing work on that version. Record what the user confirmed in `decisions.md` so it can be recovered on resumption. Continue from an already confirmed, unchanged brief.
 
 ### 2. Design and decompose
 
-Run `cat <plugin-root>/skills/documentation/SKILL.md` with the resolved literal path before writing task specs. Own the design and look for existing patterns and reusable code. Put any proposed extra, such as a related refactor or fix, in `## Proposed extras` before the user confirms the brief. Record extras discovered later for the final report or ask the user to confirm an updated brief if one becomes necessary for the goal.
+Read the [documentation skill](../documentation/SKILL.md) before writing task specs. Own the design and look for existing patterns and reusable code. Put any proposed extra, such as a related refactor or fix, in `## Proposed extras` before the user confirms the brief. Record extras discovered later for the final report or ask the user to confirm an updated brief if one becomes necessary for the goal.
 
 Split the work into tasks one worker can finish. Group tasks that change the same part of the system and are complete together. Record group membership in `decisions.md` before dispatch and update it when adding a task. Include any authorized conductor edits in the group and order them alongside delegated tasks.
 
-Write each task spec for a worker with no previous conversation context. Give it exact scope, decisions, file paths, acceptance criteria, and commands. Name any needed working directory under `.orchestra/<work>/files/T01/` in the spec. Workers read their task specs and named inputs under `.orchestra/`. Summarize verified facts from previous tasks as context and use code paths for conventions. If a task needs an earlier analyst's report, name it and specify which conclusions you verified.
+Write each task spec for a worker with no previous conversation context. Give it exact scope, relevant user authorizations and limits, file paths, decisions, acceptance criteria, and verification commands. Name any needed working directory under `.orchestra/<work>/files/T01/` in the spec. Workers read their task specs and named inputs under `.orchestra/`. Summarize verified facts from previous tasks as context and use code paths for conventions. If a task needs an earlier analyst's report, name it and specify which conclusions you verified.
 
 ### 3. Delegate
 
-Run `cat <plugin-root>/skills/delegation/SKILL.md` with the resolved literal path before first dispatch. Apply its routing rules for each initial task and each second rework round. Record the role, exact model, effort, and evidence for the choice in `decisions.md` before dispatch. Use Codex `spawn_agent` with explicit model and effort, `fork_turns: "none"`, and the exact spec and role paths. Delegate ready, independent tasks together when the host supports it.
+Read the [delegation skill](../delegation/SKILL.md) before first dispatch. Apply its routing rules for each initial task and each second rework round. Record the role, exact model, effort, and evidence for the choice in `decisions.md` before dispatch. Use Codex `spawn_agent` with explicit model and effort, `fork_turns: "none"`, and the absolute paths of the installed role and the project task spec. Delegate ready, independent tasks together when the host supports it.
 
 If the host cannot route the required model, effort, or unforked agent, stop the affected work and report the missing capability. Split oversized work at the conductor level. Workers do not delegate.
 
 ### 4. Wait for the results
 
-Review received work and prepare pending task specs while workers run. When there is nothing else ready, use `wait_agent` if exposed or the host's supported background completion mechanism. Give active workers time to finish and keep file ownership intact. When a worker has stopped or failed, recover its assignment using the existing spec or the rework process. If the host cannot surface a required handback, report that blocker.
+Review received work and prepare pending task specs while workers run. When there is nothing else ready, use `wait_agent` if exposed or the host's supported background completion mechanism. Give active workers time to finish and keep file ownership intact. If a worker has stopped or its handback is unavailable, check the scoped changes and the report path in its spec. Recover unfinished work using that spec or the rework process.
 
 ### 5. Review
 
-Use the worker's status, changed files, and report path to locate the result. Review implementation or document results before reading the report.
+Match the handback's task ID and report path to the assigned spec. Use the status and changed files to locate the result. If only the files remain, identify the role from the task records and read just the report's status line if needed. Independently review each completed implementation or writing result before reading the body of its report.
 
 1. Inspect the scoped diff and new files. Confirm that the result stays within scope and meets each acceptance criterion. Run the verification yourself and apply the documentation checks. When another worker is editing files your check reads, defer that check until the shared verification run.
 2. Write `.orchestra/<work>/reviews/T01.md` with the current scope, checks and observed results, and verdict. After each new attempt, refresh the record against the new result.
-3. Open the report using the exact shell command `cat .orchestra/<work>/reports/T01.md` with the real path, from the project directory. Compare the report's claims with your findings and verify any claims you missed.
+3. Open the report named in the task spec. Compare its claims with your findings, verify any claims you missed, and update the verdict if necessary. On resumption, an existing independent review can serve this purpose when it covers the current result.
 
-For `BLOCKED`, `FAILED`, or a `analyst` report, open the report directly with the same exact `cat` command. For an analyst, the report is the deliverable. Verify its citations and evidence and write the review record before accepting the conclusions.
+For `BLOCKED` or `FAILED`, read the report directly to diagnose the problem. An analyst's report is the deliverable. Read it directly, verify its citations and evidence, and write the review record before accepting the conclusions.
+
+Check that the report's status agrees with any handback. A `DONE` report must give observed evidence for every acceptance criterion, as described in the [worker reporting instructions](../../roles/reporting.md). Ask the worker to correct missing or contradictory evidence before accepting the task.
 
 When a worker is blocked, answer from the brief when it gives you the decision. Otherwise ask the user or obtain the needed authorization. Use `followup_task` when available to resume that worker.
 
@@ -106,7 +106,7 @@ Make reversible choices within the brief yourself, including task order, model r
 
 ## Pre-approved actions
 
-Record only actions the user explicitly authorized for this work on the `Pre-approved:` line under `## Decision rights`. Separate keys with commas or use `none`. Describe target and scope in the brief. Each key is independent. Follow repository and host rules in addition to the brief.
+Under `## Decision rights`, describe in plain language each action the user explicitly authorized, its target and its limits. List the corresponding keys on `Pre-approved:`, separated by commas, or use `none`. Interpret an existing brief's keys within the scope the user confirmed. Follow repository and host rules in addition to the brief.
 
 | Key | Action |
 | --- | --- |
@@ -119,15 +119,15 @@ Record only actions the user explicitly authorized for this work on the `Pre-app
 | `ssh` | Connect with SSH or transfer files using SCP or SFTP |
 | `deploy` | Deploy or change infrastructure |
 
-For a denial due to missing `data`, `deps`, or `git` approval, explain the command, target, and purpose. Record the user's explicit authorization in the brief and obtain confirmation of that version before retrying. A worker reports `BLOCKED` and resumes after confirmation. Execute approved Git state changes yourself when the shared tree is idle. Use separate, literal commands if the hook cannot classify a compound command.
+For a needed data, dependency, or Git change outside existing authorization, describe the operation, target, and purpose in a revised brief and obtain the user's confirmation before proceeding. Pass the relevant authorization to the worker in its task spec. Carry out authorized Git state changes yourself when the shared tree is idle.
 
-For a one-off approval on an external action or a production data change, follow the denial's instructions. Ask the user to reply in chat with the exact `orchestra approve <code>` it prints, and describe the command, target, and purpose. After approval, you run the identical command once in the same working directory and active work. Production data changes require this separate approval even when the brief includes `data`. A worker reports `BLOCKED` and leaves the one-off command to you. Continue independent work while waiting.
+For an external action outside existing authorization, ask for a specific decision in chat. Name the operation, target, purpose, and expected effect. A production data change requires authorization for that particular operation and environment even when the brief includes `data`. When the user has specifically approved a one-time action, record their decision and carry it out once within those limits. A worker reports `BLOCKED` and leaves the one-time action to you. Continue independent work while waiting.
 
 ## Files you write yourself
 
 You write the work records. A user can also authorize exact files under `Conductor writes:` when the wording is itself the design, such as a prompt, skill, or product copy, or when you have decided each statement of a project document. Use comma-separated paths or `none`. Paths must name individual files. Delegate code, configuration, tests, and documents whose content is assigned through an outline.
 
-For each authorized edit, use `apply_patch` once its dependencies have passed review and its inputs and outputs are stable. Read your diff, run the relevant checks, and record the change and checks as a `[W]` entry. Delegate project files discovered later when they already fit the confirmed scope.
+Make each authorized edit once its dependencies have passed review and its inputs and outputs are stable. Read your diff, run the relevant checks, and record the change and checks as a `[W]` entry. Delegate project files discovered later when they already fit the confirmed scope.
 
 ## Document formats
 

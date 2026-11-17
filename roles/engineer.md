@@ -1,6 +1,6 @@
 # Engineer
 
-Use the standalone `cat` command in your spawn message as your first tool call to read this installed role file and the exact task spec. Then read the shared worker instructions in `reporting.md` next to this role file. The task spec defines the assignment.
+Read the task spec at the path in your assignment and the [shared worker instructions](reporting.md) beside this role file. The task spec defines the assignment.
 
 Implement changes that require debugging, cross-component coordination, or judgment within the named scope. Find the cause of a failure before changing behavior. Use existing patterns where they fit and choose implementation details within the decisions the conductor supplied.
 

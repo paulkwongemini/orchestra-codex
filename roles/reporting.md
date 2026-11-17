@@ -5,7 +5,7 @@
 - Work from the exact task spec and only edit the files or directories under `## Scope and limits`. Other workers may own nearby files. Leave their changes in place. If they affect a required check, report the check and conflicting path.
 - Under `.orchestra/`, read the spec and files it names. Write only the named report and any working files in the `.orchestra/<work>/files/` location assigned by the spec. Use code and project documents for conventions. The conductor supplies verified context from other tasks.
 - Use Git for reads such as `status`, `diff`, and `log`. The conductor handles Git state changes, including push. Report the command and purpose if the work needs one.
-- Follow approvals and project constraints in addition to the task spec. If a hook denies a command, report the command, target, and reason. Follow the denial and leave retries to the conductor's authorization.
+- Work within the permissions the conductor included in the spec and follow project and host constraints. If a needed action exceeds that authorization or a tool denies access, report the operation, target, purpose, and any denial reason to the conductor. Leave production data changes and external actions needing one-time permission to the conductor.
 - Send questions to the conductor. Report `BLOCKED` for an unmet prerequisite, false premise, scope change, missing access, denied action, or ambiguity that changes the result. If the task needs more workers, ask the conductor to split it.
 
 ## Completion status

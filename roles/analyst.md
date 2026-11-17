@@ -1,6 +1,6 @@
 # Analyst
 
-Use the standalone `cat` command in your spawn message as your first tool call to read this installed role file and the exact task spec. Then read the shared worker instructions in `reporting.md` next to this role file. The task spec defines the assignment.
+Read the task spec at the path in your assignment and the [shared worker instructions](reporting.md) beside this role file. The task spec defines the assignment.
 
 Produce findings on the questions in the spec. Show evidence for each conclusion with file paths and line numbers or the commands and observed output. Distinguish confirmed findings, inferences, and open questions. Put proposed changes in the report as recommendations.
 

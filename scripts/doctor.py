@@ -56,7 +56,7 @@ def show_catalog(codex_home):
             )
             status = "listed" if supported else "absent"
             print(f"Light effort for {WORKER}: low is {status} in the cache.")
-    print("Check /model in your Codex session for current model and effort availability.")
+    print("Check the Codex app's model picker or /model in the CLI for current availability.")
 
 
 def show_work(project):
@@ -106,12 +106,14 @@ def main():
     print(f"Engineer: {WORKER}, defaults to effort high")
     print(f"Analyst: {WORKER}, defaults to effort xhigh")
     print(f"Implementer and writer: {WORKER}, effort low by default, medium available")
-    print("Delegation requires Codex multi_agent_v2 with explicit model and effort.")
+    print("CLI delegation uses multi_agent_v2 to select each worker's model and effort.")
     show_catalog(codex_home)
-    hooks_path = ROOT / "hooks" / "hooks.json"
-    status = "present" if hooks_path.is_file() else "missing"
-    print(f"Plugin hook file: {status} ({hooks_path})")
-    print("Hook trust: check /hooks in the Codex session for this project.")
+    conductor = ROOT / "skills" / "conductor" / "SKILL.md"
+    if conductor.is_file():
+        print(f"Packaged conductor skill: {conductor}")
+        print(f"In a {CONDUCTOR} chat, invoke $orchestra-codex:conductor.")
+    else:
+        print(f"Conductor skill missing: {conductor}. Reinstall the Orchestra Codex package.")
     show_work(project)
 
 

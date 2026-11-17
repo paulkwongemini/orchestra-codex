@@ -7,7 +7,7 @@ description: Use as the Orchestra Codex conductor before creating or re-scoping 
 
 ## 1. Find the facts yourself
 
-Before asking a question, inspect project files and instructions and consult the web when useful. Use ordinary read-only research. When a fact requires approval to obtain, defer that action to the confirmed work and discuss it with the approval it needs. Count the commands that verification will need as well, such as installing dependencies before running tests. Scale research to the task.
+Before asking a question, inspect project files and instructions and consult the web when useful. Use ordinary read-only research. If obtaining a fact requires additional access or an external action, identify what permission it needs. Include any such actions needed for verification, such as installing dependencies before running tests. Scale research to the task.
 
 ## 2. Order the decisions
 
@@ -23,13 +23,13 @@ State what the answer settled. Drop questions it made unnecessary and look up an
 
 ## 5. Settle what the brief pre-approves
 
-Ask only about the kinds of action needed for the work and its verification. Use the keys in the conductor skill. For each proposed approval, name the action, target, purpose, and what will wait without it. Preserve repository requirements under `## Constraints`. Where the repository requires specific permission, record that permission under `## Decision rights`. Surface a conflict if the goal requires something the repository forbids.
+Carry forward permissions the user has already given for the work and its verification. If an additional approval is needed, name the action, target, purpose, and what depends on it. Preserve repository requirements under `## Constraints`. Where the repository requires specific permission, record that permission under `## Decision rights`. Surface a conflict if the goal requires something the repository forbids.
 
-Put only explicitly authorized keys on `Pre-approved:`. Use `none` for no approval. A broad instruction to proceed does not authorize guarded actions. Identify any action still awaiting a decision when you show the brief.
+Describe each explicit authorization and its limits in ordinary language. Use the corresponding [conductor skill](../conductor/SKILL.md) keys on `Pre-approved:`, or `none` when none apply. Identify any action still awaiting a decision when you show the brief.
 
 ## 6. Settle which files the conductor writes
 
-Identify the individual files eligible under `Conductor writes:`, including expected group documentation changes. If there are any, explain why the wording is part of your design and ask which files the user wants you to write. A worker can write any eligible file the user does not authorize for you. Record only explicitly authorized paths or `Conductor writes: none`. Leave code, config, and tests to workers.
+Identify the individual files eligible under `Conductor writes:`, including expected group documentation changes. If the user needs to choose, explain why the wording is part of your design. A worker can write any eligible file the user does not authorize for you. Record only explicitly authorized paths or `Conductor writes: none`. Leave code, config, and tests to workers.
 
 ## 7. Settle whether the work needs a worktree
 
@@ -41,8 +41,8 @@ Make reversible choices within scope and record assumptions in the relevant brie
 
 ## 9. Write the brief
 
-Use `apply_patch` to write `.orchestra/<work>/brief.md` using the conductor skill's headings and fields. Write in the user's language. Include the intended outcome, constraints, and observable acceptance criteria.
+Write `.orchestra/<work>/brief.md` using the conductor skill's headings and fields. Write in the user's language. Include the intended outcome, constraints, and observable acceptance criteria.
 
 ## 10. Show the brief and ask for confirmation
 
-Link the brief and summarize the outcome, assumptions, proposed extras, approvals, and conductor-written files where relevant. Ask the single final question, "Do you want me to wait until you confirm the brief?" Offer `Start now` and `Review the brief first`. A normal chat reply choosing `Start now` authorizes that version. If the user chooses review, wait for authorization. When the brief changes, show the revision and ask again.
+Link the brief and summarize the outcome, assumptions, proposed extras, approvals, and conductor-written files where relevant. Ask whether to start work on this brief now or wait while the user reviews it. Accept any clear chat reply authorizing that version. If the user chooses to review, wait for authorization. When the brief changes, show what changed and confirm the revision.

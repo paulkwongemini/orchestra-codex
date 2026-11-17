@@ -28,7 +28,7 @@ Review the brief's `## Constraints` and the decision log. Put local reasons that
 
 Under `## Checks run`, record whether the diff changed any project document outside the task scope and whether the added comments pass the test. Check that each comment required by the spec sits at the intended location. A paraphrase of code, a change-history note, or a task-record reference fails the comment review.
 
-After opening the report, record stale document statements listed under `## Found outside scope` and durable facts discovered during the task. Use `- [T02] For the close of G1: the fact.` in the decision log.
+Once you have recorded your independent review, read the worker's report. Add any stale document statements under `## Found outside scope` and durable facts discovered during the task to the decision log. Use `- [T02] For the close of G1: the fact.`
 
 ## When you close a task group
 
@@ -38,7 +38,7 @@ Read the combined diff, constraints, and group decision entries. Search existing
 - If every document to change is on `Conductor writes:`, edit them and verify the diff yourself. Log `- [G1] Closed. Documents written by the conductor: README.md.` with the actual files.
 - Otherwise add a docs task to the group. Under `## Scope and limits`, name each file and state exactly which statements to remove or rewrite and what the new text should say. Limit the task to those files. Under `## Acceptance criteria`, give a command or a specific comparison for every change. Apply delegation and independent review. When it passes, log `- [G1] Closed. Docs task T04.` using the real task ID.
 
-Before deleting existing document text, confirm Git tracks the file with `git ls-files --error-unmatch -- <path>` so its old text can be recovered. Ask the user before deleting text from an untracked file.
+Before removing existing document text, check whether Git tracks the file. For an untracked file, confirm that the user has authorized removing the text.
 
 ## When you review a docs task
 

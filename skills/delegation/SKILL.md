@@ -56,7 +56,9 @@ For second rework, first address what the reviews revealed. Clarify the spec, su
 
 Before dispatch, log the task ID, role, exact model, effective effort, and the facts that drove the choice in `.orchestra/<work>/decisions.md`. For first rework record the failure evidence and correction instead of a new routing decision.
 
-Use Codex `spawn_agent` with `fork_turns: "none"`, `model: "gpt-6.2-sol"`, and the explicit `reasoning_effort` from the table. Derive `task_name` by taking the role name and appending `_` plus the lowercase task ID. A replacement can append a unique underscore suffix. Use the installed plugin root to resolve the actual absolute role path. For example:
+Use Codex `spawn_agent` with `fork_turns: "none"`, `model: "gpt-6.2-sol"`, and the explicit `reasoning_effort` from the table. Derive `task_name` by taking the role name and appending `_` plus the lowercase task ID. A replacement can append a unique underscore suffix.
+
+Give the worker two absolute paths. Resolve `../../roles/<role>.md` from the directory containing this installed skill, and resolve the task spec from the project directory. Ask the worker to read and follow those files before starting. Substitute the actual paths for the example paths below.
 
 ```json
 {
@@ -64,8 +66,8 @@ Use Codex `spawn_agent` with `fork_turns: "none"`, `model: "gpt-6.2-sol"`, and t
   "fork_turns": "none",
   "model": "gpt-6.2-sol",
   "reasoning_effort": "low",
-  "message": "As your first tool call, run the standalone shell command `cat '/absolute/installed/orchestra-codex/roles/implementer.md' '.orchestra/2026-11-12-login-fix/tasks/T01-session-expiry.md'`. Then follow the role and carry out the task spec."
+  "message": "Read your role at /installed/orchestra-codex/roles/implementer.md and your task spec at /project/.orchestra/2026-11-12-login-fix/tasks/T01-session-expiry.md. Follow the role and carry out the spec."
 }
 ```
 
-Give the worker that literal `cat` command with both actual paths even if the host has already supplied the role instructions. It lets the hook bind the assignment in sessions without a transcript. Use the returned agent ID or task name for `followup_task` and `wait_agent` according to the exposed tools. If explicit routing or unforked worker context is unavailable, report the limitation and stop the affected task.
+Use the returned agent ID or task name for `followup_task` and `wait_agent` according to the exposed tools. If explicit routing or unforked worker context is unavailable, report the limitation and stop the affected task.
