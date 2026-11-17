@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Keep local agent instructions out of the public repository.
+AGENTS.md
